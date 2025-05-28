@@ -71,6 +71,7 @@ const main = async () => {
       }
     })
 
+    console.log(`Generating routes.ts...`)
     await generateRoutes()
   } catch (err: any) {
     console.error(helpMessage)
