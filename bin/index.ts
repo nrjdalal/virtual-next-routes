@@ -64,8 +64,11 @@ const main = async () => {
       return await fs.writeFile(output, content, "utf8")
     }
 
-    chokidar.watch(watchDir).on("all", async () => {
-      await generateRoutes()
+    chokidar.watch(watchDir).on("all", async (event, path) => {
+      if (event === "add" || event === "unlink") {
+        console.log(`${event} - ${path}, regenerating routes.ts...`)
+        await generateRoutes()
+      }
     })
 
     await generateRoutes()
