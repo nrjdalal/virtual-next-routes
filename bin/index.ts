@@ -2,10 +2,10 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 import { parseArgs } from "node:util"
-import { template } from "@/bin/template"
-import { author, name, version } from "@/package.json"
+import { template } from "@/utils/template"
 import chokidar from "chokidar"
 import { glob } from "tinyglobby"
+import { author, name, version } from "../package.json"
 
 const helpMessage = `Version:
   ${name}@${version}

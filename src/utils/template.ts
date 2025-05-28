@@ -1,4 +1,4 @@
-import { name, version } from "@/package.json"
+import { name, version } from "../../package.json"
 
 const pagesTransform = (config: string[]) => {
   // page.tsx -> route("/", "page.tsx")

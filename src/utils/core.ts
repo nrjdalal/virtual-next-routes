@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import path from "node:path"
-import { template } from "@/bin/template"
+import { template } from "@/utils/template"
 import chokidar from "chokidar"
 import { glob } from "tinyglobby"
 
@@ -31,7 +31,7 @@ export async function virtualNextRoutes({
     const files = await glob("**/*.tsx", { cwd: watchDir })
     const content = template(files)
     await fs.writeFile(outFile, content, "utf8")
-    console.log(`♻️ Routes generated at ${outFile}`)
+    console.log(`♻️  Routes generated at ${outFile}`)
   }
 
   await generate()

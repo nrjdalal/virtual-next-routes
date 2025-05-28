@@ -1,5 +1,5 @@
 // src/index.ts
-import { virtualNextRoutes } from "@/src/utils/core"
+import { virtualNextRoutes } from "@/utils/core"
 import type { Plugin, ResolvedConfig } from "vite"
 
 export default function virtualNextRoutesPlugin(): Plugin {
