@@ -1,21 +1,30 @@
+// src/index.ts
 import { virtualNextRoutes } from "@/src/utils/core"
-import type { Plugin } from "vite"
+import type { Plugin, ResolvedConfig } from "vite"
 
 export default function virtualNextRoutesPlugin(): Plugin {
   let started = false
+  let watch = false
+
   return {
     name: "virtual-next-routes",
     enforce: "pre",
+
+    // 1️⃣ capture whether we're in 'serve' (dev) or 'build'
+    configResolved(config: ResolvedConfig) {
+      watch = config.command === "serve"
+    },
+
+    // 2️⃣ run your generator once, and in dev mode keep watching
     async buildStart() {
       if (started) return
       started = true
-      // @ts-ignore: 'this' has 'command' property in Vite plugin context
-      console.log(this.command)
-      // @ts-ignore: 'this' has 'command' property in Vite plugin context
-      await virtualNextRoutes({ watch: this.command === "serve" })
+      await virtualNextRoutes({ watch })
     },
+
+    // 3️⃣ swallow HMR on your generated file so Vite doesn’t restart forever
     handleHotUpdate(ctx) {
-      if (ctx.file === "routes.ts") {
+      if (ctx.file.endsWith("/routes.ts")) {
         return []
       }
     },
