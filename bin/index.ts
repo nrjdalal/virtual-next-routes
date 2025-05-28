@@ -55,8 +55,14 @@ const main = async () => {
 
     const cwd = path.resolve(values.cwd ?? process.cwd())
     const output = path.resolve(cwd, values.output)
+    let watchDir = path.resolve(cwd, "src/routes")
 
-    const watchDir = path.resolve(cwd, "src/routes")
+    try {
+      await fs.access(watchDir)
+    } catch {
+      watchDir = path.resolve(cwd, "src/app")
+      await fs.access(watchDir)
+    }
 
     const generateRoutes = async () => {
       const files = await glob("**/*.tsx", { cwd: watchDir })
