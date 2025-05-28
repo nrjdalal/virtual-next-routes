@@ -1,8 +1,8 @@
 import path from "node:path"
-import { virtualNextRoutes } from "@/utils/core"
+import { virtualNextRoutes as core } from "@/utils/core"
 import type { Plugin, ResolvedConfig } from "vite"
 
-export default function virtualNextRoutesPlugin(): Plugin {
+export default function virtualNextRoutes(): Plugin {
   let started = false
   let watch = false
 
@@ -19,7 +19,7 @@ export default function virtualNextRoutesPlugin(): Plugin {
     async buildStart() {
       if (started) return
       started = true
-      await virtualNextRoutes({ watch })
+      await core({ watch })
     },
 
     // 3️⃣ swallow HMR on your generated file so Vite doesn’t restart forever
