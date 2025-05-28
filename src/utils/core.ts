@@ -31,7 +31,7 @@ export async function virtualNextRoutes({
     const files = await glob("**/*.tsx", { cwd: watchDir })
     const content = template(files)
     await fs.writeFile(outFile, content, "utf8")
-    console.log(`♻️  Routes generated at ${outFile}`)
+    console.log(`🔥 Routes generated at ${outFile}`)
   }
 
   await generate()
@@ -46,7 +46,6 @@ export async function virtualNextRoutes({
 
       setTimeout(async () => {
         scheduled = false
-        console.log("♻️  Regenerating routes…")
         await generate()
       }, 0)
     }
@@ -54,11 +53,11 @@ export async function virtualNextRoutes({
     chokidar
       .watch(watchDir, { ignoreInitial: true })
       .on("add", (f) => {
-        console.log(`➕  ${f}`)
+        // console.log(`+  ${f}`) // TODO: Add debug logging
         scheduleGenerate()
       })
       .on("unlink", (f) => {
-        console.log(`➖  ${f}`)
+        // console.log(`-  ${f}`) // TODO: Add debug logging
         scheduleGenerate()
       })
   }

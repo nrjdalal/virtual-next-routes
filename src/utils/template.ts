@@ -3,9 +3,9 @@ import { name, version } from "../../package.json"
 const pagesTransform = (config: string[]) => {
   // page.tsx -> route("/", "page.tsx")
   // nested/page.tsx -> route("/nested", "nested/page.tsx")
-  // [slug]/page.tsx -> route("/[slug]", "[slug]/page.tsx")
-  // nested/[slug]/page.tsx -> route("/nested/[slug]", "nested/[slug]/page.tsx")
-  // nested/[slug]/nested/page.tsx -> route("/nested/[slug]/nested", "nested/[slug]/nested/page.tsx")
+  // [slug]/page.tsx -> route("/$slug", "[slug]/page.tsx")
+  // nested/[slug]/page.tsx -> route("/nested/$slug", "nested/[slug]/page.tsx")
+  // nested/[slug]/nested/page.tsx -> route("/nested/$slug/nested", "nested/[slug]/nested/page.tsx")
 
   config = config.filter(
     (path) => path === "page.tsx" || path.endsWith("/page.tsx"),
@@ -13,11 +13,22 @@ const pagesTransform = (config: string[]) => {
 
   return config
     .map((path) => {
-      const parts = path.split("/").filter(Boolean)
-      const lastPart = parts.pop() || ""
-      const isDynamic = lastPart.startsWith("[") && lastPart.endsWith("]")
-      const routePath = `/${parts.join("/")}${isDynamic ? `/${lastPart}` : ""}`
-      return `  route("${routePath}", "${path}")`
+      // Remove trailing '/page.tsx'
+      const routeSegments = path
+        .replace(/\/?page\.tsx$/, "")
+        .split("/")
+        .filter(Boolean)
+      // Replace [slug] with $slug for route path
+      const routePath =
+        "/" +
+        routeSegments
+          .map((seg) =>
+            seg.startsWith("[") && seg.endsWith("]")
+              ? `$${seg.slice(1, -1)}`
+              : seg,
+          )
+          .join("/")
+      return `  route("${routePath === "/" ? "/" : routePath}", "${path}")`
     })
     .join(",\n")
 }

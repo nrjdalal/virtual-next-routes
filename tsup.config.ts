@@ -5,6 +5,7 @@ export default defineConfig({
   dts: true,
   entry: {
     index: "src/index.ts",
+    "bin/index": "bin/index.ts",
   },
   format: ["esm"],
   minify: true,
