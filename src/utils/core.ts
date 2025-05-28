@@ -46,7 +46,12 @@ export async function virtualNextRoutes({
     //   }, 100)
     // }
 
-    chokidar.watch(watchDir, { ignoreInitial: true }).on("add", generate)
+    chokidar
+      .watch(watchDir, { ignoreInitial: true })
+      .on("add", async (path) => {
+        console.log(`📂 File added: ${path}`)
+        generate()
+      })
     // .on("unlink", scheduleGenerate)
   }
 }
