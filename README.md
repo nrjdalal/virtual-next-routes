@@ -55,3 +55,47 @@ Route Groups and private folders
 
 - [x] (group)
 - [ ] \_folder
+
+## Mappings
+
+```json
+{
+  "mappings": [
+    {
+      "function": "rootRoute",
+      "url": null,
+      "patterns": ["__root.tsx", "layout.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/",
+      "patterns": ["index.tsx", "page.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/nested",
+      "patterns": ["nested/index.tsx", "nested/page.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/$slug",
+      "patterns": ["[slug]/index.tsx", "[slug]/page.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/",
+      "patterns": ["(folder)/index.tsx", "(folder)/page.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/nested",
+      "patterns": ["(folder)/nested/index.tsx", "(folder)/nested/page.tsx"]
+    },
+    {
+      "function": "route",
+      "url": "/$slug",
+      "patterns": ["(folder)/[slug]/index.tsx", "(folder)/[slug]/page.tsx"]
+    }
+  ]
+}
+```
