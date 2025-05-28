@@ -60,7 +60,7 @@ const main = async () => {
 
     const generateRoutes = async () => {
       const files = await glob("**/*.tsx", { cwd: watchDir })
-      const content = template(JSON.stringify(files, null, 2))
+      const content = template(files)
       return await fs.writeFile(output, content, "utf8")
     }
 
