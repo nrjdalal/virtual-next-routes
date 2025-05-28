@@ -14,6 +14,7 @@
     "url": "https://nrjdalal.com"
   },
   "type": "module",
+  "exports": "./dist/index.js",
   "bin": "./dist/bin/index.js",
   "files": [
     "dist"
@@ -46,7 +47,8 @@
   "dependencies": {
     "@tanstack/virtual-file-routes": "^1.115.0",
     "chokidar": "^4.0.3",
-    "tinyglobby": "^0.2.14"
+    "tinyglobby": "^0.2.14",
+    "vite": "^6.3.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

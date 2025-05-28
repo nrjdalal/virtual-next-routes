@@ -2,8 +2,8 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 import { parseArgs } from "node:util"
-import { template } from "@/template"
-import { author, name, version } from "~/package.json"
+import { template } from "@/bin/template"
+import { author, name, version } from "@/package.json"
 import chokidar from "chokidar"
 import { glob } from "tinyglobby"
 

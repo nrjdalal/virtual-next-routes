@@ -20,4 +20,5 @@ dist/
 
 # test
 routes.ts
-/src
+/src/app
+/src/routes
