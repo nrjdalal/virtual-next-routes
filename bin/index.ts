@@ -26,17 +26,10 @@ const parse: typeof parseArgs = (config) => {
   }
 }
 
-/**
- * Convert a relative file path to a route path.
- */
 function toRoute(relative: string): string {
   const parts = relative.split("/")
   if (parts[parts.length - 1] === "page.tsx") {
     parts.pop()
-  } else {
-    const file = parts.pop()!
-    const name = path.basename(file, ".tsx")
-    parts.push(name)
   }
   const routeParts = parts
     .map((seg) => {
@@ -50,7 +43,6 @@ function toRoute(relative: string): string {
 
 const main = async () => {
   try {
-    // Parse CLI args
     const { positionals, values } = parse({
       allowPositionals: true,
       options: {
@@ -69,7 +61,6 @@ const main = async () => {
       }
     }
 
-    // Determine the routes directory from vite.config.ts, or fallback
     let rootDirName = "src/routes"
     const configPath = path.join(process.cwd(), "vite.config.ts")
     try {
@@ -81,9 +72,7 @@ const main = async () => {
           break
         }
       }
-    } catch {
-      // ignore if config not found or import fails
-    }
+    } catch {}
 
     const appDir = path.join(process.cwd(), rootDirName)
     let layoutExists = false
@@ -141,7 +130,7 @@ import {
       if (rel === "layout.tsx") {
         layoutExists = event === "add" || event === "addDir"
         if (event === "unlink") layoutExists = false
-      } else if (rel.endsWith(".tsx")) {
+      } else if (rel.endsWith("page.tsx")) {
         if (event === "add") pages.add(rel)
         if (event === "unlink") pages.delete(rel)
       }
