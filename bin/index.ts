@@ -54,14 +54,14 @@ const main = async () => {
     }
 
     const cwd = path.resolve(values.cwd ?? process.cwd())
+    const output = path.resolve(cwd, values.output)
 
     const watchDir = path.resolve(cwd, "src/routes")
 
     const generateRoutes = async () => {
       const files = await glob("**/*.tsx", { cwd: watchDir })
-      const outputPath = path.resolve(cwd, values.output as string)
       const content = template(JSON.stringify(files, null, 2))
-      return await fs.writeFile(outputPath, content, "utf8")
+      return await fs.writeFile(output, content, "utf8")
     }
 
     chokidar.watch(watchDir).on("all", async () => {
