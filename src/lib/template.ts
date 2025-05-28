@@ -16,33 +16,40 @@ const pagesTransform = (config: string[]) => {
       path.endsWith("/index.tsx"),
   )
 
-  return config
-    .map((path) => {
-      // Remove trailing '/page.tsx' or '/index.tsx'
-      let routeSegments = path
-        .replace(/\/?(page|index)\.tsx$/, "")
-        .split("/")
-        .filter(Boolean)
+  // Map to route paths and keep track to avoid duplicates
+  const seen = new Set<string>()
+  const routes = []
 
-      // Remove any (folder) segments from the route path, but keep them in the file path
-      const routePathSegments = routeSegments.filter(
-        (seg) => !/^\(.*\)$/.test(seg),
-      )
+  for (const path of config) {
+    let routeSegments = path
+      .replace(/\/?(page|index)\.tsx$/, "")
+      .split("/")
+      .filter(Boolean)
 
-      // Replace [slug] with $slug for route path
-      const routePath =
-        "/" +
-        routePathSegments
-          .map((seg) =>
-            seg.startsWith("[") && seg.endsWith("]")
-              ? `$${seg.slice(1, -1)}`
-              : seg,
-          )
-          .join("/")
+    const routePathSegments = routeSegments.filter(
+      (seg) => !/^\(.*\)$/.test(seg),
+    )
 
-      return `  route("${routePath === "/" ? "/" : routePath}", "${path}")`
-    })
-    .join(",\n")
+    const routePath =
+      "/" +
+      routePathSegments
+        .map((seg) =>
+          seg.startsWith("[") && seg.endsWith("]")
+            ? `$${seg.slice(1, -1)}`
+            : seg,
+        )
+        .join("/")
+
+    const normalizedRoutePath = routePath === "/" ? "/" : routePath
+
+    if (!seen.has(normalizedRoutePath)) {
+      seen.add(normalizedRoutePath)
+      routes.push(`  route("${normalizedRoutePath}", "${path}")`)
+    }
+    // If already seen, skip to avoid duplicate route paths
+  }
+
+  return routes.join(",\n")
 }
 
 export const template = (config: string[]) => {
