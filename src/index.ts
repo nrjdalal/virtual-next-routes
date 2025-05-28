@@ -5,6 +5,7 @@ export default function virtualNextRoutesPlugin(): Plugin {
   let started = false
   return {
     name: "virtual-next-routes",
+    enforce: "pre",
     async buildStart() {
       if (started) return
       started = true
