@@ -10,7 +10,7 @@ export default function virtualNextRoutesPlugin(): Plugin {
     name: "virtual-next-routes",
     enforce: "pre",
 
-    // 1️⃣ capture whether we're in 'serve' (dev) or 'build'
+    // 1️⃣ capture whether we're in 'serve' (dev) or 'build' mode
     configResolved(config: ResolvedConfig) {
       watch = config.command === "serve"
     },
@@ -23,10 +23,10 @@ export default function virtualNextRoutesPlugin(): Plugin {
     },
 
     // 3️⃣ swallow HMR on your generated file so Vite doesn’t restart forever
-    handleHotUpdate(ctx) {
-      if (ctx.file.endsWith("/routes.ts")) {
-        return []
-      }
-    },
+    // handleHotUpdate(ctx) {
+    //   if (ctx.file.endsWith("/routes.ts")) {
+    //     return []
+    //   }
+    // },
   }
 }
