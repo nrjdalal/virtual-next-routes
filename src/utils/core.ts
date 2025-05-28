@@ -31,15 +31,24 @@ export async function virtualNextRoutes({
     const files = await glob("**/*.tsx", { cwd: watchDir })
     const content = template(files)
     await fs.writeFile(outFile, content, "utf8")
-    console.log(`🔨 routes generated at ${outFile}`)
+    console.log(`♻️ Routes generated at ${outFile}`)
   }
 
   await generate()
 
   if (watch) {
+    let timer: NodeJS.Timeout
+
+    const scheduleGenerate = () => {
+      clearTimeout(timer)
+      timer = setTimeout(async () => {
+        await generate()
+      }, 50)
+    }
+
     chokidar
       .watch(watchDir, { ignoreInitial: true })
-      .on("add", generate)
-      .on("unlink", generate)
+      .on("add", scheduleGenerate)
+      .on("unlink", scheduleGenerate)
   }
 }
