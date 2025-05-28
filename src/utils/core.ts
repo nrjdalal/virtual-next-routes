@@ -43,7 +43,7 @@ export async function virtualNextRoutes({
       clearTimeout(timer)
       timer = setTimeout(async () => {
         await generate()
-      }, 50)
+      }, 100)
     }
 
     chokidar
