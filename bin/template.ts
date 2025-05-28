@@ -11,18 +11,20 @@ const pagesTransform = (config: string[]) => {
     (path) => path === "page.tsx" || path.endsWith("/page.tsx"),
   )
 
-  return config.map((path) => {
-    const parts = path.split("/").filter(Boolean)
-    const lastPart = parts.pop() || ""
-    const isDynamic = lastPart.startsWith("[") && lastPart.endsWith("]")
-    const routePath = `/${parts.join("/")}${isDynamic ? `/${lastPart}` : ""}`
-    return `route("${routePath}", "${path}")`
-  })
+  return config
+    .map((path) => {
+      const parts = path.split("/").filter(Boolean)
+      const lastPart = parts.pop() || ""
+      const isDynamic = lastPart.startsWith("[") && lastPart.endsWith("]")
+      const routePath = `/${parts.join("/")}${isDynamic ? `/${lastPart}` : ""}`
+      return `  route("${routePath}", "${path}")`
+    })
+    .join(",\n")
 }
 
 export const template = (config: string[]) => {
   const transformed = config.includes("layout.tsx")
-    ? `rootRoute("layout.tsx", [${pagesTransform(config)}])`
+    ? `rootRoute("layout.tsx", [\n${pagesTransform(config)}\n])`
     : null
 
   return `// @ts-nocheck
