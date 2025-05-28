@@ -1,8 +1,24 @@
 import { name, version } from "~/package.json"
 
+const pagesTransform = (config: string[]) => {
+  // page.tsx -> route("/", "page.tsx")
+  // nested/page.tsx -> route("/nested", "nested/page.tsx")
+  // [slug]/page.tsx -> route("/[slug]", "[slug]/page.tsx")
+  // nested/[slug]/page.tsx -> route("/nested/[slug]", "nested/[slug]/page.tsx")
+  // nested/[slug]/nested/page.tsx -> route("/nested/[slug]/nested", "nested/[slug]/nested/page.tsx")
+
+  return config.map((path) => {
+    const parts = path.split("/").filter(Boolean)
+    const lastPart = parts.pop() || ""
+    const isDynamic = lastPart.startsWith("[") && lastPart.endsWith("]")
+    const routePath = `/${parts.join("/")}${isDynamic ? `/${lastPart}` : ""}`
+    return `route("${routePath}", "${path}")`
+  })
+}
+
 export const template = (config: string[]) => {
   const transformed = config.includes("layout.tsx")
-    ? `rootRoute("layout.tsx")`
+    ? `rootRoute("layout.tsx", [${pagesTransform(config)}])`
     : null
 
   return `// @ts-nocheck
