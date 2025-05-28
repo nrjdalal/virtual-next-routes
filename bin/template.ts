@@ -7,6 +7,10 @@ const pagesTransform = (config: string[]) => {
   // nested/[slug]/page.tsx -> route("/nested/[slug]", "nested/[slug]/page.tsx")
   // nested/[slug]/nested/page.tsx -> route("/nested/[slug]/nested", "nested/[slug]/nested/page.tsx")
 
+  config = config.filter(
+    (path) => path === "page.tsx" || path.endsWith("/page.tsx"),
+  )
+
   return config.map((path) => {
     const parts = path.split("/").filter(Boolean)
     const lastPart = parts.pop() || ""
