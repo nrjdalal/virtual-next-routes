@@ -8,18 +8,21 @@ export interface VirtualNextRoutesOptions {
   cwd?: string
   output?: string
   watch?: boolean
+  debug?: boolean
 }
 
 export async function virtualNextRoutes({
   cwd = process.cwd(),
   output = "routes.ts",
   watch = false,
+  debug = false,
 }: VirtualNextRoutesOptions) {
   const root = path.resolve(cwd)
   const outFile = path.resolve(root, output)
 
   let watchDir = path.resolve(root, "src/routes")
 
+  // TODO: Read from vite.config.ts instead
   try {
     await fs.access(watchDir)
   } catch {
@@ -53,11 +56,11 @@ export async function virtualNextRoutes({
     chokidar
       .watch(watchDir, { ignoreInitial: true })
       .on("add", (f) => {
-        // console.log(`+  ${f}`) // TODO: Add debug logging
+        if (debug) console.log(`+  ${f}`)
         scheduleGenerate()
       })
       .on("unlink", (f) => {
-        // console.log(`-  ${f}`) // TODO: Add debug logging
+        if (debug) console.log(`-  ${f}`)
         scheduleGenerate()
       })
   }

@@ -14,8 +14,10 @@ Usage:
   $ ${name} [options]
 
 Options:
-  -o, --output <path>  destination directory for json files (default: "./public/r")
-  -c, --cwd <cwd>      the working directory (default: "./")
+  -c, --cwd <cwd>      the working directory (default: current directory)
+  -o, --output <path>  destination directory (default: routes.ts)
+  -w, --watch          watch for changes (default: true)
+  -d, --debug          enable debug mode (default: false)
   -v, --version        display version
   -h, --help           display help
 
@@ -35,8 +37,10 @@ const main = async () => {
     const { positionals, values } = parse({
       allowPositionals: true,
       options: {
-        output: { type: "string", short: "o", default: "routes.ts" },
         cwd: { type: "string", short: "c" },
+        output: { type: "string", short: "o", default: "routes.ts" },
+        watch: { type: "boolean", short: "w", default: true },
+        debug: { type: "boolean", short: "d", default: false },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -59,7 +63,8 @@ const main = async () => {
     await virtualNextRoutes({
       cwd,
       output,
-      watch: true,
+      watch: values.watch,
+      debug: values.debug,
     })
   } catch (err: any) {
     console.error(helpMessage)
