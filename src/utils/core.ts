@@ -39,16 +39,14 @@ export async function virtualNextRoutes({
   if (watch) {
     let timer: NodeJS.Timeout
 
-    const scheduleGenerate = () => {
-      clearTimeout(timer)
-      timer = setTimeout(async () => {
-        await generate()
-      }, 100)
-    }
+    // const scheduleGenerate = () => {
+    //   clearTimeout(timer)
+    //   timer = setTimeout(async () => {
+    //     await generate()
+    //   }, 100)
+    // }
 
-    chokidar
-      .watch(watchDir, { ignoreInitial: true })
-      .on("add", scheduleGenerate)
-      .on("unlink", scheduleGenerate)
+    chokidar.watch(watchDir, { ignoreInitial: true }).on("add", generate)
+    // .on("unlink", scheduleGenerate)
   }
 }
