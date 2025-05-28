@@ -2,14 +2,14 @@ import { virtualNextRoutes as core } from "@/lib/core"
 import type { Plugin, ResolvedConfig } from "vite"
 
 export default function virtualNextRoutes({
-  cwd,
+  cwd = process.cwd(),
   output = "routes.ts",
   debug = false,
 }: {
   cwd?: string
   output?: string
   debug?: boolean
-}): Plugin {
+} = {}): Plugin {
   let started = false
   let watch = false
 
@@ -27,7 +27,7 @@ export default function virtualNextRoutes({
       if (started) return
       started = true
       await core({
-        cwd: cwd ?? process.cwd(),
+        cwd,
         output,
         watch,
         debug,
