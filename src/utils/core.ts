@@ -37,21 +37,29 @@ export async function virtualNextRoutes({
   await generate()
 
   if (watch) {
-    let timer: NodeJS.Timeout
+    let scheduled = false
 
-    // const scheduleGenerate = () => {
-    //   clearTimeout(timer)
-    //   timer = setTimeout(async () => {
-    //     await generate()
-    //   }, 100)
-    // }
+    const scheduleGenerate = () => {
+      if (scheduled) return
+
+      scheduled = true
+
+      setTimeout(async () => {
+        scheduled = false
+        console.log("♻️  Regenerating routes…")
+        await generate()
+      }, 0)
+    }
 
     chokidar
       .watch(watchDir, { ignoreInitial: true })
-      .on("add", async (path) => {
-        console.log(`📂 File added: ${path}`)
-        generate()
+      .on("add", (f) => {
+        console.log(`➕  ${f}`)
+        scheduleGenerate()
       })
-    // .on("unlink", scheduleGenerate)
+      .on("unlink", (f) => {
+        console.log(`➖  ${f}`)
+        scheduleGenerate()
+      })
   }
 }
