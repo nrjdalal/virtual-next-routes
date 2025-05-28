@@ -9,7 +9,14 @@ export default function virtualNextRoutesPlugin(): Plugin {
       if (started) return
       started = true
       // @ts-ignore: 'this' has 'command' property in Vite plugin context
+      console.log(this.command)
+      // @ts-ignore: 'this' has 'command' property in Vite plugin context
       await virtualNextRoutes({ watch: this.command === "serve" })
+    },
+    handleHotUpdate(ctx) {
+      if (ctx.file === "routes.ts") {
+        return []
+      }
     },
   }
 }
