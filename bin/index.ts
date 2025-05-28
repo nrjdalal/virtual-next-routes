@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import fs from "node:fs/promises"
 import path from "node:path"
 import { parseArgs } from "node:util"
-import { template } from "@/template"
-import { author, name, version } from "~/package.json"
+import { virtualNextRoutes } from "@/utils/core"
+import { template } from "@/utils/template"
 import chokidar from "chokidar"
 import { glob } from "tinyglobby"
+import { author, name, version } from "../package.json"
 
 const helpMessage = `Version:
   ${name}@${version}
@@ -14,8 +14,10 @@ Usage:
   $ ${name} [options]
 
 Options:
-  -o, --output <path>  destination directory for json files (default: "./public/r")
-  -c, --cwd <cwd>      the working directory (default: "./")
+  -c, --cwd <cwd>      the working directory (default: current directory)
+  -o, --output <path>  destination directory (default: routes.ts)
+  -w, --watch          watch for changes (default: true)
+  -d, --debug          enable debug mode (default: false)
   -v, --version        display version
   -h, --help           display help
 
@@ -35,8 +37,10 @@ const main = async () => {
     const { positionals, values } = parse({
       allowPositionals: true,
       options: {
-        output: { type: "string", short: "o", default: "routes.ts" },
         cwd: { type: "string", short: "c" },
+        output: { type: "string", short: "o", default: "routes.ts" },
+        watch: { type: "boolean", short: "w", default: true },
+        debug: { type: "boolean", short: "d", default: false },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -55,34 +59,13 @@ const main = async () => {
 
     const cwd = path.resolve(values.cwd ?? process.cwd())
     const output = path.resolve(cwd, values.output)
-    let watchDir = path.resolve(cwd, "src/routes")
 
-    try {
-      await fs.access(watchDir)
-    } catch {
-      watchDir = path.resolve(cwd, "src/app")
-      await fs.access(watchDir)
-    }
-
-    const generateRoutes = async () => {
-      const files = await glob("**/*.tsx", { cwd: watchDir })
-      const content = template(files)
-      return await fs.writeFile(output, content, "utf8")
-    }
-
-    chokidar
-      .watch(watchDir, {
-        ignoreInitial: true,
-      })
-      .on("all", async (event, path) => {
-        if (event === "add" || event === "unlink") {
-          console.log(`${event} - ${path}, regenerating routes.ts...`)
-          await generateRoutes()
-        }
-      })
-
-    console.log(`generating routes.ts...`)
-    await generateRoutes()
+    await virtualNextRoutes({
+      cwd,
+      output,
+      watch: values.watch,
+      debug: values.debug,
+    })
   } catch (err: any) {
     console.error(helpMessage)
     console.error(`\n${err.message}\n`)
