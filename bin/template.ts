@@ -15,7 +15,6 @@ import {
   route,
 } from "@tanstack/virtual-file-routes"
 
-// prettier-ignore
 export const routes = ${config}
 `
 }
