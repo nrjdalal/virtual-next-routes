@@ -1,4 +1,4 @@
-// src/index.ts
+import path from "node:path"
 import { virtualNextRoutes } from "@/utils/core"
 import type { Plugin, ResolvedConfig } from "vite"
 
@@ -23,10 +23,13 @@ export default function virtualNextRoutesPlugin(): Plugin {
     },
 
     // 3️⃣ swallow HMR on your generated file so Vite doesn’t restart forever
-    // handleHotUpdate(ctx) {
-    //   if (ctx.file.endsWith("/routes.ts")) {
-    //     return []
-    //   }
-    // },
+    handleHotUpdate(ctx) {
+      if (path.resolve(ctx.file) === path.resolve("routes.ts")) {
+        console.log(
+          "[virtual-next-routes] HMR triggered, but not restarting Vite.",
+        )
+        return []
+      }
+    },
   }
 }
