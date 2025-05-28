@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 import path from "node:path"
 import { parseArgs } from "node:util"
-import { virtualNextRoutes } from "@/utils/core"
-import { template } from "@/utils/template"
-import chokidar from "chokidar"
-import { glob } from "tinyglobby"
+import { virtualNextRoutes } from "@/lib/core"
 import { author, name, version } from "../package.json"
 
 const helpMessage = `Version:

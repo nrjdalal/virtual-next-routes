@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import path from "node:path"
-import { template } from "@/utils/template"
+import { template } from "@/lib/template"
 import chokidar from "chokidar"
 import { glob } from "tinyglobby"
 

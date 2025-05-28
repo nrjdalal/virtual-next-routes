@@ -1,5 +1,5 @@
 import path from "node:path"
-import { virtualNextRoutes as core } from "@/utils/core"
+import { virtualNextRoutes as core } from "@/lib/core"
 import type { Plugin, ResolvedConfig } from "vite"
 
 export default function virtualNextRoutes({
