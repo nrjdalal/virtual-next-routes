@@ -17,3 +17,7 @@ node_modules/
 
 # build
 dist/
+
+# test
+routes.ts
+/src

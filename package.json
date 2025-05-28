@@ -43,6 +43,11 @@
     ],
     "semi": false
   },
+  "dependencies": {
+    "@tanstack/virtual-file-routes": "^1.115.0",
+    "chokidar": "^4.0.3",
+    "tinyglobby": "^0.2.14"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
@@ -55,9 +60,5 @@
     "sort-package-json": "^3.2.1",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@tanstack/virtual-file-routes": "^1.115.0",
-    "chokidar": "^4.0.3"
   }
 }
