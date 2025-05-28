@@ -7,7 +7,6 @@ export const template = (config: string) => {
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.  
 
-// prettier-ignore
 import {
   index,
   layout,
