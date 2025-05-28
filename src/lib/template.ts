@@ -1,24 +1,26 @@
 import { name, version } from "../../package.json"
 
 const pagesTransform = (config: string[]) => {
-  // page.tsx -> route("/", "page.tsx")
-  // nested/page.tsx -> route("/nested", "nested/page.tsx")
-  // [slug]/page.tsx -> route("/$slug", "[slug]/page.tsx")
-  // nested/[slug]/page.tsx -> route("/nested/$slug", "nested/[slug]/page.tsx")
-  // nested/[slug]/nested/page.tsx -> route("/nested/$slug/nested", "nested/[slug]/nested/page.tsx")
-  // (folder)/page.tsx -> route("/", "(folder)/page.tsx")
-  // (folder)/nested/page.tsx -> route("/nested", "(folder)/nested/page.tsx")
-  // (folder)/[slug]/page.tsx -> route("/$slug", "(folder)/[slug]/page.tsx")
+  // index.tsx or page.tsx -> route("/", "index.tsx" or "page.tsx")
+  // nested/index.tsx or nested/page.tsx -> route("/nested", "nested/index.tsx" or "nested/page.tsx")
+  // [slug]/index.tsx or [slug]/page.tsx -> route("/$slug", "[slug]/index.tsx" or "[slug]/page.tsx")
+  // (folder)/index.tsx or (folder)/page.tsx -> route("/", "(folder)/index.tsx" or "(folder)/page.tsx")
+  // (folder)/nested/index.tsx or (folder)/nested/page.tsx -> route("/nested", "(folder)/nested/index.tsx" or "(folder)/nested/page.tsx")
+  // (folder)/[slug]/index.tsx or (folder)/[slug]/page.tsx -> route("/$slug", "(folder)/[slug]/index.tsx" or "(folder)/[slug]/page.tsx")
 
   config = config.filter(
-    (path) => path === "page.tsx" || path.endsWith("/page.tsx"),
+    (path) =>
+      path === "page.tsx" ||
+      path === "index.tsx" ||
+      path.endsWith("/page.tsx") ||
+      path.endsWith("/index.tsx"),
   )
 
   return config
     .map((path) => {
-      // Remove trailing '/page.tsx'
+      // Remove trailing '/page.tsx' or '/index.tsx'
       let routeSegments = path
-        .replace(/\/?page\.tsx$/, "")
+        .replace(/\/?(page|index)\.tsx$/, "")
         .split("/")
         .filter(Boolean)
 
@@ -44,8 +46,14 @@ const pagesTransform = (config: string[]) => {
 }
 
 export const template = (config: string[]) => {
-  const transformed = config.includes("layout.tsx")
-    ? `rootRoute("layout.tsx", [\n${pagesTransform(config)}\n])`
+  const layoutFile = config.includes("__root.tsx")
+    ? "__root.tsx"
+    : config.includes("layout.tsx")
+      ? "layout.tsx"
+      : null
+
+  const transformed = layoutFile
+    ? `rootRoute("${layoutFile}", [\n${pagesTransform(config)}\n])`
     : null
 
   return `// @ts-nocheck
