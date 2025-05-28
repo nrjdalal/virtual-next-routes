@@ -5,16 +5,16 @@ import chokidar from "chokidar"
 import { glob } from "tinyglobby"
 
 export interface VirtualNextRoutesOptions {
-  cwd?: string
-  output?: string
-  watch?: boolean
+  cwd: string
+  output: string
+  watch: boolean
   debug?: boolean
 }
 
 export async function virtualNextRoutes({
-  cwd = process.cwd(),
-  output = "routes.ts",
-  watch = false,
+  cwd,
+  output,
+  watch,
   debug = false,
 }: VirtualNextRoutesOptions) {
   const root = path.resolve(cwd)
