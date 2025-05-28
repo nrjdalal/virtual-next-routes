@@ -33,15 +33,10 @@ export const template = (config: string[]) => {
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.  
 
-import {
-  index,
-  layout,
-  physical,
-  rootRoute,
-  route,
-} from "@tanstack/virtual-file-routes"
+// prettier-ignore
+import { index, layout, physical, rootRoute, route } from "@tanstack/virtual-file-routes";
 
 // prettier-ignore
-export const routes = ${transformed}
+export const routes = ${transformed};
 `
 }
