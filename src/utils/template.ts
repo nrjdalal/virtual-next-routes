@@ -6,6 +6,9 @@ const pagesTransform = (config: string[]) => {
   // [slug]/page.tsx -> route("/$slug", "[slug]/page.tsx")
   // nested/[slug]/page.tsx -> route("/nested/$slug", "nested/[slug]/page.tsx")
   // nested/[slug]/nested/page.tsx -> route("/nested/$slug/nested", "nested/[slug]/nested/page.tsx")
+  // (folder)/page.tsx -> route("/", "(folder)/page.tsx")
+  // (folder)/nested/page.tsx -> route("/nested", "(folder)/nested/page.tsx")
+  // (folder)/[slug]/page.tsx -> route("/$slug", "(folder)/[slug]/page.tsx")
 
   config = config.filter(
     (path) => path === "page.tsx" || path.endsWith("/page.tsx"),
@@ -14,20 +17,27 @@ const pagesTransform = (config: string[]) => {
   return config
     .map((path) => {
       // Remove trailing '/page.tsx'
-      const routeSegments = path
+      let routeSegments = path
         .replace(/\/?page\.tsx$/, "")
         .split("/")
         .filter(Boolean)
+
+      // Remove any (folder) segments from the route path, but keep them in the file path
+      const routePathSegments = routeSegments.filter(
+        (seg) => !/^\(.*\)$/.test(seg),
+      )
+
       // Replace [slug] with $slug for route path
       const routePath =
         "/" +
-        routeSegments
+        routePathSegments
           .map((seg) =>
             seg.startsWith("[") && seg.endsWith("]")
               ? `$${seg.slice(1, -1)}`
               : seg,
           )
           .join("/")
+
       return `  route("${routePath === "/" ? "/" : routePath}", "${path}")`
     })
     .join(",\n")
