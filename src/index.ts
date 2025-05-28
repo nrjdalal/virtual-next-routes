@@ -23,10 +23,11 @@ export default function virtualNextRoutesPlugin(): Plugin {
     },
 
     // 3️⃣ swallow HMR on your generated file so Vite doesn’t restart forever
-    // handleHotUpdate(ctx) {
-    //   if (ctx.file.endsWith("/routes.ts")) {
-    //     return []
-    //   }
-    // },
+    handleHotUpdate(ctx) {
+      console.log("Virtual Next Routes: HMR update for", ctx.file)
+      if (ctx.file.endsWith("/routes.ts")) {
+        return []
+      }
+    },
   }
 }
