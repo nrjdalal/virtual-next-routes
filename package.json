@@ -54,8 +54,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
-    "@types/node": "^22.15.21",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.2",
+    "@types/node": "^22.15.29",
     "@types/react": "^19.1.6",
     "lint-staged": "^15.5.2",
     "prettier": "^3.5.3",
