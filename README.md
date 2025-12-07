@@ -25,7 +25,7 @@ export default defineConfig({
     tanstackStart({
       tsr: {
         // This is the directory where TanStack Router will look for your routes.
-        routesDirectory: "src/app",
+        routesDirectory: "app",
 +         virtualRouteConfig: "./routes",
       },
     }),
