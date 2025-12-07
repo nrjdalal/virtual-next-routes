@@ -33,165 +33,100 @@ export default defineConfig({
 })
 ```
 
-## Features & Routing Conventions
+## Folder and File Conventions
 
-`virtual-next-routes` supports the following Next.js App Router conventions:
+`virtual-next-routes` adopts the Next.js App Router conventions for file-system routing.
 
-### Basic Routing
+### Routing Files
 
-| File                | URL        | Description                 |
-| ------------------- | ---------- | --------------------------- |
-| `page.tsx`          | `/`        | Index route                 |
-| `about/page.tsx`    | `/about`   | Nested route                |
-| `contact/index.tsx` | `/contact` | Alternative index file name |
+The following files are used to define routes and layouts:
 
-### API Routes
+| File     | Extension | Description                                               |
+| -------- | --------- | --------------------------------------------------------- |
+| `layout` | `.tsx`    | Shared UI for a segment and its children                  |
+| `page`   | `.tsx`    | Unique UI of a route and makes routes publicly accessible |
+| `route`  | `.ts`     | Server-side API endpoint                                  |
 
-| File                      | URL              | Description  |
-| ------------------------- | ---------------- | ------------ |
-| `api/users/route.ts`      | `/api/users`     | API Endpoint |
-| `api/posts/[id]/route.ts` | `/api/posts/$id` | Dynamic API  |
+### Nested Routes
 
-### Dynamic Routing
+Folders define URL segments. Nesting folders nests segments. Layouts at any level wrap their child segments.
 
-| File                        | URL                 | Description                |
-| --------------------------- | ------------------- | -------------------------- |
-| `blog/[slug]/page.tsx`      | `/blog/$slug`       | Dynamic segment            |
-| `shop/[...slug]/page.tsx`   | `/shop/$`           | Catch-all segment          |
-| `docs/[[...slug]]/page.tsx` | `/docs` & `/docs/$` | Optional catch-all segment |
+| Path                       | URL pattern | Description                  |
+| -------------------------- | ----------- | ---------------------------- |
+| `src/routes/layout.tsx`    | —           | Root layout wraps all routes |
+| `src/routes/page.tsx`      | `/`         | Public route                 |
+| `src/routes/blog/page.tsx` | `/blog`     | Public route                 |
 
-### Layouts
+### Dynamic Routes
 
-A `layout.tsx` file wraps all routes in its directory and subdirectories.
+Dynamic segments can be created by wrapping a folder's name in square brackets: `[folderName]`.
 
-- `src/routes/layout.tsx`: Root layout (wraps everything).
-- `src/routes/dashboard/layout.tsx`: Wraps all `/dashboard/*` routes.
+| Path                                   | URL pattern                               |
+| -------------------------------------- | ----------------------------------------- |
+| `src/routes/blog/[slug]/page.tsx`      | `/blog/my-first-post`                     |
+| `src/routes/shop/[...slug]/page.tsx`   | `/shop/clothing`, `/shop/clothing/shirts` |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs`, `/docs/layouts-and-pages`        |
 
-### Route Groups
+### Route Groups and Private Folders
 
-Folders enclosed in parentheses `(group)` are treated as route groups. They allow you to organize files without affecting the URL path.
+You can organize your code without affecting the URL structure.
 
-- `src/routes/(auth)/login/page.tsx` -> `/login`
-- `src/routes/(app)/dashboard/page.tsx` -> `/dashboard`
-
-### Private Folders
-
-Folders starting with an underscore `_folder` are private and excluded from routing.
-
-- `src/routes/_components/button.tsx` -> (Ignored)
-- `src/routes/_utils/api.ts` -> (Ignored)
+| Path                                | URL pattern | Notes                                     |
+| ----------------------------------- | ----------- | ----------------------------------------- |
+| `src/routes/(marketing)/page.tsx`   | `/`         | Group omitted from URL                    |
+| `src/routes/(shop)/cart/page.tsx`   | `/cart`     | Share layouts within `(shop)`             |
+| `src/routes/_components/Button.tsx` | —           | Not routable; safe place for UI utilities |
+| `src/routes/_lib/utils.ts`          | —           | Not routable; safe place for utils        |
 
 ## Example Structure
 
-Given the following file structure (matches this repository's `src/routes`):
+The following example demonstrates a comprehensive project structure:
 
 ```
 src/routes/
-├── layout.tsx                              # Root Layout
-├── page.tsx                                # /
-├── (group)/
-│   ├── [group-slug]/
-│   │   └── page.tsx                        # /:group-slug
-│   ├── group-page-one/
-│   │   └── page.tsx                        # /group-page-one
-│   └── group-page-two/
-│       └── page.tsx                        # /group-page-two
-├── [slug-a]/
-│   └── [slug-b]/
-│       └── page.tsx                        # /:slug-a/:slug-b
-├── [slug]/
-│   ├── nested/
-│   │   └── page.tsx                        # /:slug/nested
-│   └── page.tsx                            # /:slug
+├── layout.tsx                          # Root Layout
+├── page.tsx                            # /
+├── (marketing)/                        # Route Group (pathless)
+│   ├── about/
+│   │   └── page.tsx                    # /about
+│   └── blog/
+│       ├── [slug]/
+│       │   └── page.tsx                # /blog/:slug
+│       └── page.tsx                    # /blog
+├── (shop)/                             # Route Group (pathless)
+│   ├── layout.tsx                      # Shop Layout (wraps account & cart)
+│   ├── account/
+│   │   └── page.tsx                    # /account
+│   └── cart/
+│       └── page.tsx                    # /cart
 ├── api/
-│   ├── posts/
-│   │   └── [slug]/
-│   │       └── route.ts                    # /api/posts/:slug
-│   ├── users/
-│   │   └── route.ts                        # /api/users
-│   └── route.ts                            # /api
-├── auth/
-│   ├── (private)/
-│   │   └── dashboard/
-│   │       └── page.tsx                    # /auth/dashboard
-│   ├── (public)/
-│   │   ├── login/
-│   │   │   └── page.tsx                    # /auth/login
-│   │   └── register/
-│   │       └── page.tsx                    # /auth/register
-│   └── layout.tsx                          # Auth Layout
-├── blog/
-│   └── [slug]/
-│       ├── layout.tsx                      # Blog Post Layout
-│       └── page.tsx                        # /blog/:slug
-├── dashboard/
-│   ├── analytics/
-│   │   └── page.tsx                        # /dashboard/analytics
-│   ├── layout.tsx                          # Dashboard Layout
-│   └── page.tsx                            # /dashboard
-├── features/
-│   ├── (settings)/
-│   │   ├── account/
-│   │   │   └── page.tsx                    # /features/account
-│   │   ├── layout.tsx                      # Settings Layout
-│   │   └── profile/
-│   │       └── page.tsx                    # /features/profile
-│   └── page.tsx                            # /features
-└── nested/
-    ├── [slug]/
-    │   └── page.tsx                        # /nested/:slug
-    └── page.tsx                            # /nested
+│   └── users/
+│       └── route.ts                    # /api/users
+└── _components/                        # Private Folder
+    └── Button.tsx                      # (Ignored)
 ```
 
-It generates a route tree equivalent to:
+### Route Tree Output
+
+This structure generates a route tree equivalent to:
 
 - **Root** (`/`)
   - **Index** (`/`)
-  - **Group** (Pathless)
-    - **Dynamic Group Slug** (`/$group-slug`)
-    - **Group Page One** (`/group-page-one`)
-    - **Group Page Two** (`/group-page-two`)
-  - **Dynamic Slug A** (`/$slug-a`)
-    - **Dynamic Slug B** (`/$slug-a/$slug-b`)
-  - **Dynamic Slug** (`/$slug`)
-    - **Index** (`/$slug`)
-    - **Nested** (`/$slug/nested`)
+  - **Marketing Group** (Pathless)
+    - **About** (`/about`)
+    - **Blog** (`/blog`)
+      - **Post** (`/blog/$slug`)
+  - **Shop Group** (Pathless)
+    - **Layout**
+    - **Account** (`/account`)
+    - **Cart** (`/cart`)
   - **API** (`/api`)
-    - **Index** (`/api`)
     - **Users** (`/api/users`)
-    - **Posts** (`/api/posts/$slug`)
-  - **Auth** (`/auth`)
-    - **Layout**
-    - **Private** (Pathless)
-      - **Dashboard** (`/auth/dashboard`)
-    - **Public** (Pathless)
-      - **Login** (`/auth/login`)
-      - **Register** (`/auth/register`)
-  - **Blog** (`/blog`)
-    - **Dynamic Post** (`/blog/$slug`)
-      - **Layout**
-  - **Dashboard** (`/dashboard`)
-    - **Layout**
-    - **Index** (`/dashboard`)
-    - **Analytics** (`/dashboard/analytics`)
-  - **Features** (`/features`)
-    - **Index** (`/features`)
-    - **Settings** (Pathless)
-      - **Layout**
-      - **Account** (`/features/account`)
-      - **Profile** (`/features/profile`)
-  - **Nested** (`/nested`)
-    - **Index** (`/nested`)
-    - **Dynamic Slug** (`/nested/$slug`)
 
-## Compatibility Status
+## Organizing Your Project
 
-- [x] **Root Layout**: `layout.tsx` at root.
-- [x] **Nested Layouts**: `layout.tsx` in subdirectories.
-- [x] **Pages**: `page.tsx` or `index.tsx`.
-- [x] **API Routes**: `route.ts`.
-- [x] **Dynamic Routes**: `[slug]`.
-- [x] **Catch-all Routes**: `[...slug]`.
-- [x] **Optional Catch-all Routes**: `[[...slug]]`.
-- [x] **Route Groups**: `(group)`.
-- [x] **Private Folders**: `_folder`.
+`virtual-next-routes` is unopinionated about how you organize your project files, but supports:
+
+- **Colocation**: Store project files inside route segments (safe as long as they don't match routing file conventions).
+- **Private Folders**: Use `_folderName` to explicitly opt-out of routing.
+- **Route Groups**: Use `(groupName)` to organize routes without affecting the URL path.
