@@ -15,8 +15,27 @@ export const routes = rootRoute("layout.tsx", [
     ]),
     index("[slug]/page.tsx")
   ]),
+  route("api", [
+    route("users", [
+      index("api/users/route.ts")
+    ]),
+    route("posts", [
+      route("$slug", [
+        index("api/posts/[slug]/route.ts")
+      ])
+    ]),
+    index("api/route.ts")
+  ]),
   route("auth", "auth/layout.tsx", [
-
+    route("login", [
+      index("auth/(public)/login/page.tsx")
+    ]),
+    route("register", [
+      index("auth/(public)/register/page.tsx")
+    ]),
+    route("dashboard", [
+      index("auth/(private)/dashboard/page.tsx")
+    ])
   ]),
   route("dashboard", "dashboard/layout.tsx", [
     route("analytics", [
@@ -26,11 +45,11 @@ export const routes = rootRoute("layout.tsx", [
   ]),
   route("features", [
     layout("features/(settings)/layout.tsx", [
-      route("account", [
-        index("features/(settings)/account/page.tsx")
-      ]),
       route("profile", [
         index("features/(settings)/profile/page.tsx")
+      ]),
+      route("account", [
+        index("features/(settings)/account/page.tsx")
       ])
     ]),
     index("features/page.tsx")

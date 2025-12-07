@@ -45,6 +45,13 @@ export default defineConfig({
 | `about/page.tsx`    | `/about`   | Nested route                |
 | `contact/index.tsx` | `/contact` | Alternative index file name |
 
+### API Routes
+
+| File                      | URL              | Description  |
+| ------------------------- | ---------------- | ------------ |
+| `api/users/route.ts`      | `/api/users`     | API Endpoint |
+| `api/posts/[id]/route.ts` | `/api/posts/$id` | Dynamic API  |
+
 ### Dynamic Routing
 
 | File                        | URL                 | Description                |
@@ -125,6 +132,7 @@ It generates a route tree equivalent to:
 - [x] **Root Layout**: `layout.tsx` at root.
 - [x] **Nested Layouts**: `layout.tsx` in subdirectories.
 - [x] **Pages**: `page.tsx` or `index.tsx`.
+- [x] **API Routes**: `route.ts`.
 - [x] **Dynamic Routes**: `[slug]`.
 - [x] **Catch-all Routes**: `[...slug]`.
 - [x] **Optional Catch-all Routes**: `[[...slug]]`.

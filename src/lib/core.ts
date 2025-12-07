@@ -31,7 +31,7 @@ export async function virtualNextRoutes({
   }
 
   async function generate() {
-    const files = await glob("**/*.tsx", { cwd: watchDir })
+    const files = await glob("**/*.{tsx,ts}", { cwd: watchDir })
     const content = template(files)
     await fs.writeFile(outFile, content, "utf8")
     console.log(`🔥 Routes generated at ${outFile}`)

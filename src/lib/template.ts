@@ -50,7 +50,12 @@ const buildTree = (files: string[]) => {
       if (isFile) {
         if (part === "layout.tsx" || part === "__root.tsx") {
           currentNode.layout = file
-        } else if (part === "page.tsx" || part === "index.tsx") {
+        } else if (
+          part === "page.tsx" ||
+          part === "index.tsx" ||
+          part === "route.tsx" ||
+          part === "route.ts"
+        ) {
           currentNode.page = file
         }
         continue
