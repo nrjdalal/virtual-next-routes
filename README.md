@@ -83,49 +83,106 @@ Folders starting with an underscore `_folder` are private and excluded from rout
 
 ## Example Structure
 
-Given the following file structure:
+Given the following file structure (matches this repository's `src/routes`):
 
 ```
 src/routes/
-├── layout.tsx                  # Root Layout
-├── page.tsx                    # /
-├── about/
-│   └── page.tsx                # /about
+├── layout.tsx                              # Root Layout
+├── page.tsx                                # /
+├── (group)/
+│   ├── [group-slug]/
+│   │   └── page.tsx                        # /:group-slug
+│   ├── group-page-one/
+│   │   └── page.tsx                        # /group-page-one
+│   └── group-page-two/
+│       └── page.tsx                        # /group-page-two
+├── [slug-a]/
+│   └── [slug-b]/
+│       └── page.tsx                        # /:slug-a/:slug-b
+├── [slug]/
+│   ├── nested/
+│   │   └── page.tsx                        # /:slug/nested
+│   └── page.tsx                            # /:slug
+├── api/
+│   ├── posts/
+│   │   └── [slug]/
+│   │       └── route.ts                    # /api/posts/:slug
+│   ├── users/
+│   │   └── route.ts                        # /api/users
+│   └── route.ts                            # /api
+├── auth/
+│   ├── (private)/
+│   │   └── dashboard/
+│   │       └── page.tsx                    # /auth/dashboard
+│   ├── (public)/
+│   │   ├── login/
+│   │   │   └── page.tsx                    # /auth/login
+│   │   └── register/
+│   │       └── page.tsx                    # /auth/register
+│   └── layout.tsx                          # Auth Layout
 ├── blog/
-│   ├── layout.tsx              # Blog Layout
-│   ├── [slug]/
-│   │   └── page.tsx            # /blog/:slug
-│   └── page.tsx                # /blog
-├── (auth)/                     # Route Group (doesn't add to path)
-│   ├── layout.tsx              # Auth Layout
-│   ├── login/
-│   │   └── page.tsx            # /login
-│   └── register/
-│       └── page.tsx            # /register
-└── dashboard/
-    ├── layout.tsx              # Dashboard Layout
-    ├── settings/
-    │   └── page.tsx            # /dashboard/settings
-    └── page.tsx                # /dashboard
+│   └── [slug]/
+│       ├── layout.tsx                      # Blog Post Layout
+│       └── page.tsx                        # /blog/:slug
+├── dashboard/
+│   ├── analytics/
+│   │   └── page.tsx                        # /dashboard/analytics
+│   ├── layout.tsx                          # Dashboard Layout
+│   └── page.tsx                            # /dashboard
+├── features/
+│   ├── (settings)/
+│   │   ├── account/
+│   │   │   └── page.tsx                    # /features/account
+│   │   ├── layout.tsx                      # Settings Layout
+│   │   └── profile/
+│   │       └── page.tsx                    # /features/profile
+│   └── page.tsx                            # /features
+└── nested/
+    ├── [slug]/
+    │   └── page.tsx                        # /nested/:slug
+    └── page.tsx                            # /nested
 ```
 
 It generates a route tree equivalent to:
 
 - **Root** (`/`)
   - **Index** (`/`)
-  - **About** (`/about`)
+  - **Group** (Pathless)
+    - **Dynamic Group Slug** (`/$group-slug`)
+    - **Group Page One** (`/group-page-one`)
+    - **Group Page Two** (`/group-page-two`)
+  - **Dynamic Slug A** (`/$slug-a`)
+    - **Dynamic Slug B** (`/$slug-a/$slug-b`)
+  - **Dynamic Slug** (`/$slug`)
+    - **Index** (`/$slug`)
+    - **Nested** (`/$slug/nested`)
+  - **API** (`/api`)
+    - **Index** (`/api`)
+    - **Users** (`/api/users`)
+    - **Posts** (`/api/posts/$slug`)
+  - **Auth** (`/auth`)
+    - **Layout**
+    - **Private** (Pathless)
+      - **Dashboard** (`/auth/dashboard`)
+    - **Public** (Pathless)
+      - **Login** (`/auth/login`)
+      - **Register** (`/auth/register`)
   - **Blog** (`/blog`)
-    - **Layout** (Wraps blog routes)
-    - **Index** (`/blog`)
-    - **Post** (`/blog/$slug`)
-  - **Auth Group** (Pathless)
-    - **Layout** (Wraps auth routes)
-    - **Login** (`/login`)
-    - **Register** (`/register`)
+    - **Dynamic Post** (`/blog/$slug`)
+      - **Layout**
   - **Dashboard** (`/dashboard`)
-    - **Layout** (Wraps dashboard routes)
+    - **Layout**
     - **Index** (`/dashboard`)
-    - **Settings** (`/dashboard/settings`)
+    - **Analytics** (`/dashboard/analytics`)
+  - **Features** (`/features`)
+    - **Index** (`/features`)
+    - **Settings** (Pathless)
+      - **Layout**
+      - **Account** (`/features/account`)
+      - **Profile** (`/features/profile`)
+  - **Nested** (`/nested`)
+    - **Index** (`/nested`)
+    - **Dynamic Slug** (`/nested/$slug`)
 
 ## Compatibility Status
 

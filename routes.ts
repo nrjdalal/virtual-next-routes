@@ -15,17 +15,6 @@ export const routes = rootRoute("layout.tsx", [
     ]),
     index("[slug]/page.tsx")
   ]),
-  route("api", [
-    route("users", [
-      index("api/users/route.ts")
-    ]),
-    route("posts", [
-      route("$slug", [
-        index("api/posts/[slug]/route.ts")
-      ])
-    ]),
-    index("api/route.ts")
-  ]),
   route("auth", "auth/layout.tsx", [
     route("login", [
       index("auth/(public)/login/page.tsx")
@@ -37,22 +26,33 @@ export const routes = rootRoute("layout.tsx", [
       index("auth/(private)/dashboard/page.tsx")
     ])
   ]),
+  route("api", [
+    route("users", [
+      index("api/users/route.ts")
+    ]),
+    route("posts", [
+      route("$slug", [
+        index("api/posts/[slug]/route.ts")
+      ])
+    ]),
+    index("api/route.ts")
+  ]),
+  route("features", [
+    layout("features/(settings)/layout.tsx", [
+      route("account", [
+        index("features/(settings)/account/page.tsx")
+      ]),
+      route("profile", [
+        index("features/(settings)/profile/page.tsx")
+      ])
+    ]),
+    index("features/page.tsx")
+  ]),
   route("dashboard", "dashboard/layout.tsx", [
     route("analytics", [
       index("dashboard/analytics/page.tsx")
     ]),
     index("dashboard/page.tsx")
-  ]),
-  route("features", [
-    layout("features/(settings)/layout.tsx", [
-      route("profile", [
-        index("features/(settings)/profile/page.tsx")
-      ]),
-      route("account", [
-        index("features/(settings)/account/page.tsx")
-      ])
-    ]),
-    index("features/page.tsx")
   ]),
   route("nested", [
     route("$slug", [
