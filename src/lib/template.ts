@@ -1,6 +1,32 @@
 import { name, version } from "../../package.json"
 
-const pagesTransform = (config: string[]) => {
+interface RouteNode {
+  segment: string
+  fullPath: string
+  children: Map<string, RouteNode>
+  layout?: string
+  page?: string
+}
+
+const isPrivate = (path: string) => {
+  return path.split("/").some((seg) => seg.startsWith("_") && seg !== "_layout")
+}
+
+const indent = (code: string, tab = "  ") => {
+  return code
+    .split("\n")
+    .map((line) => (line ? tab + line : line))
+    .join("\n")
+}
+
+const toRoutePath = (segment: string) => {
+  if (segment.startsWith("[...") && segment.endsWith("]")) return "$"
+  if (segment.startsWith("[") && segment.endsWith("]"))
+    return "$" + segment.slice(1, -1)
+  return segment
+}
+
+const buildTree = (files: string[]) => {
   // index.tsx or page.tsx -> route("/", "index.tsx" or "page.tsx")
   // nested/index.tsx or nested/page.tsx -> route("/nested", "nested/index.tsx" or "nested/page.tsx")
   // [slug]/index.tsx or [slug]/page.tsx -> route("/$slug", "[slug]/index.tsx" or "[slug]/page.tsx")
@@ -8,60 +34,101 @@ const pagesTransform = (config: string[]) => {
   // (folder)/nested/index.tsx or (folder)/nested/page.tsx -> route("/nested", "(folder)/nested/index.tsx" or "(folder)/nested/page.tsx")
   // (folder)/[slug]/index.tsx or (folder)/[slug]/page.tsx -> route("/$slug", "(folder)/[slug]/index.tsx" or "(folder)/[slug]/page.tsx")
 
-  config = config.filter(
-    (path) =>
-      path === "page.tsx" ||
-      path === "index.tsx" ||
-      path.endsWith("/page.tsx") ||
-      path.endsWith("/index.tsx"),
-  )
+  const root: RouteNode = { segment: "", fullPath: "", children: new Map() }
 
-  // Map to route paths and keep track to avoid duplicates
-  const seen = new Set<string>()
-  const routes = []
+  for (const file of files) {
+    if (isPrivate(file)) continue
 
-  for (const path of config) {
-    let routeSegments = path
-      .replace(/\/?(page|index)\.tsx$/, "")
-      .split("/")
-      .filter(Boolean)
+    const parts = file.split("/")
+    let currentNode = root
 
-    const routePathSegments = routeSegments.filter(
-      (seg) => !/^\(.*\)$/.test(seg),
-    )
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i]
+      const isLast = i === parts.length - 1
+      const isFile = isLast && (part.endsWith(".tsx") || part.endsWith(".ts"))
 
-    const routePath =
-      "/" +
-      routePathSegments
-        .map((seg) =>
-          seg.startsWith("[") && seg.endsWith("]")
-            ? `$${seg.slice(1, -1)}`
-            : seg,
-        )
-        .join("/")
+      if (isFile) {
+        if (part === "layout.tsx" || part === "__root.tsx") {
+          currentNode.layout = file
+        } else if (part === "page.tsx" || part === "index.tsx") {
+          currentNode.page = file
+        }
+        continue
+      }
 
-    const normalizedRoutePath = routePath === "/" ? "/" : routePath
-
-    if (!seen.has(normalizedRoutePath)) {
-      seen.add(normalizedRoutePath)
-      routes.push(`  route("${normalizedRoutePath}", "${path}")`)
+      // Directory or file acting as directory
+      if (!currentNode.children.has(part)) {
+        currentNode.children.set(part, {
+          segment: part,
+          fullPath: parts.slice(0, i + 1).join("/"),
+          children: new Map(),
+        })
+      }
+      currentNode = currentNode.children.get(part)!
     }
-    // If already seen, skip to avoid duplicate route paths
   }
 
-  return routes.join(",\n")
+  return root
+}
+
+const processNode = (node: RouteNode): string[] => {
+  const childrenCodes: string[] = []
+
+  for (const child of node.children.values()) {
+    childrenCodes.push(...processNode(child))
+  }
+
+  if (node.page) {
+    if (node.segment.startsWith("[[...") && node.segment.endsWith("]]")) {
+      childrenCodes.push(`route("$", "${node.page}")`)
+      childrenCodes.push(`index("${node.page}")`)
+    } else {
+      childrenCodes.push(`index("${node.page}")`)
+    }
+  }
+
+  const isRoot = node.segment === ""
+  const isGroup = node.segment.startsWith("(") && node.segment.endsWith(")")
+  const isOptionalCatchAll =
+    node.segment.startsWith("[[...") && node.segment.endsWith("]]")
+
+  const childrenString = childrenCodes.join(",\n")
+  const indentedChildren = indent(childrenString)
+
+  if (isRoot) {
+    if (node.layout) {
+      return [`rootRoute("${node.layout}", [\n${indentedChildren}\n])`]
+    }
+    return childrenCodes
+  }
+
+  if (isGroup || isOptionalCatchAll) {
+    if (node.layout) {
+      return [`layout("${node.layout}", [\n${indentedChildren}\n])`]
+    }
+    return childrenCodes
+  }
+
+  const routePath = toRoutePath(node.segment)
+
+  if (node.layout) {
+    return [
+      `route("${routePath}", "${node.layout}", [\n${indentedChildren}\n])`,
+    ]
+  }
+
+  if (childrenCodes.length > 0) {
+    return [`route("${routePath}", [\n${indentedChildren}\n])`]
+  }
+
+  return []
 }
 
 export const template = (config: string[]) => {
-  const layoutFile = config.includes("__root.tsx")
-    ? "__root.tsx"
-    : config.includes("layout.tsx")
-      ? "layout.tsx"
-      : null
-
-  const transformed = layoutFile
-    ? `rootRoute("${layoutFile}", [\n${pagesTransform(config)}\n])`
-    : null
+  const root = buildTree(config)
+  const result = processNode(root)
+  const transformed =
+    result.length === 1 ? result[0] : `[\n${indent(result.join(",\n"))}\n]`
 
   return `// @ts-nocheck
 
@@ -70,7 +137,7 @@ export const template = (config: string[]) => {
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 // prettier-ignore
-import { index, layout, physical, rootRoute, route } from "@tanstack/virtual-file-routes";
+import { index, layout, rootRoute, route } from "@tanstack/virtual-file-routes";
 
 // prettier-ignore
 export const routes = ${transformed};
