@@ -71,7 +71,9 @@ const buildTree = (files: string[]) => {
 const processNode = (node: RouteNode): string[] => {
   const childrenCodes: string[] = []
 
-  for (const child of node.children.values()) {
+  for (const child of new Map(
+    [...node.children.entries()].sort((a, b) => a[0].localeCompare(b[0])),
+  ).values()) {
     childrenCodes.push(...processNode(child))
   }
 

@@ -13,6 +13,15 @@ import { index, layout, rootRoute, route } from "@tanstack/virtual-file-routes";
 
 // prettier-ignore
 export const routes = rootRoute("layout.tsx", [
+  route("about", [
+    index("(marketing)/about/page.tsx")
+  ]),
+  route("blog", [
+    route("$slug", [
+      index("(marketing)/blog/[slug]/page.tsx")
+    ]),
+    index("(marketing)/blog/page.tsx")
+  ]),
   layout("(shop)/layout.tsx", [
     route("account", [
       index("(shop)/account/page.tsx")
@@ -22,15 +31,26 @@ export const routes = rootRoute("layout.tsx", [
     ])
   ]),
   route("api", [
-    route("users", [
-      index("api/users/route.ts")
-    ]),
     route("posts", [
       route("$slug", [
         index("api/posts/[slug]/route.ts")
       ])
     ]),
+    route("users", [
+      index("api/users/route.ts")
+    ]),
     index("api/route.ts")
+  ]),
+  route("blog", [
+    route("$slug", "blog/[slug]/layout.tsx", [
+      index("blog/[slug]/page.tsx")
+    ])
+  ]),
+  route("dashboard", "dashboard/layout.tsx", [
+    route("analytics", [
+      index("dashboard/analytics/page.tsx")
+    ]),
+    index("dashboard/page.tsx")
   ]),
   route("features", [
     layout("features/(settings)/layout.tsx", [
@@ -42,26 +62,6 @@ export const routes = rootRoute("layout.tsx", [
       ])
     ]),
     index("features/page.tsx")
-  ]),
-  route("dashboard", "dashboard/layout.tsx", [
-    route("analytics", [
-      index("dashboard/analytics/page.tsx")
-    ]),
-    index("dashboard/page.tsx")
-  ]),
-  route("about", [
-    index("(marketing)/about/page.tsx")
-  ]),
-  route("blog", [
-    route("$slug", [
-      index("(marketing)/blog/[slug]/page.tsx")
-    ]),
-    index("(marketing)/blog/page.tsx")
-  ]),
-  route("blog", [
-    route("$slug", "blog/[slug]/layout.tsx", [
-      index("blog/[slug]/page.tsx")
-    ])
   ]),
   index("page.tsx")
 ]);
