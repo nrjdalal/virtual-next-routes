@@ -65,6 +65,7 @@ When you don't know the exact segment names ahead of time and want to create rou
 #### Dynamic Segments
 
 A Dynamic Segment can be created by wrapping a folder's name in square brackets: `[folderName]`. For example, `[id]` or `[slug]`.
+This maps to a **Dynamic Route** path `$folderName` in TanStack Router.
 
 | Route                             | Example URL | `params`        |
 | --------------------------------- | ----------- | --------------- |
@@ -75,28 +76,30 @@ A Dynamic Segment can be created by wrapping a folder's name in square brackets:
 #### Catch-all Segments
 
 Dynamic Segments can be extended to **catch-all** subsequent segments by adding an ellipsis inside the brackets `[...folderName]`.
+This maps to a **Splat Route** path `$` in TanStack Router. The parameter is accessed via `_splat` (string).
 
 **Example:** `src/routes/shop/[...slug]/page.tsx`
 
-| Route                                | Example URL   | `params`                    |
-| ------------------------------------ | ------------- | --------------------------- |
-| `src/routes/shop/[...slug]/page.tsx` | `/shop/a`     | `{ slug: ['a'] }`           |
-| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b`   | `{ slug: ['a', 'b'] }`      |
-| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b/c` | `{ slug: ['a', 'b', 'c'] }` |
+| Route                                | Example URL   | `params`              |
+| ------------------------------------ | ------------- | --------------------- |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a`     | `{ _splat: 'a' }`     |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b`   | `{ _splat: 'a/b' }`   |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b/c` | `{ _splat: 'a/b/c' }` |
 
 #### Optional Catch-all Segments
 
 Catch-all Segments can be made **optional** by including the parameter in double square brackets: `[[...folderName]]`.
+This maps to both an **Index Route** (for the base path) and a **Splat Route** path `$`.
 
 **Example:** `src/routes/docs/[[...slug]]/page.tsx`
 
 The difference between **catch-all** and **optional catch-all** segments is that with optional, the route without the parameter is also matched (`/docs` in the example above).
 
-| Route                                  | Example URL | `params`               |
-| -------------------------------------- | ----------- | ---------------------- |
-| `src/routes/docs/[[...slug]]/page.tsx` | `/docs`     | `{ slug: undefined }`  |
-| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a`   | `{ slug: ['a'] }`      |
-| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a/b` | `{ slug: ['a', 'b'] }` |
+| Route                                  | Example URL | `params`            |
+| -------------------------------------- | ----------- | ------------------- |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs`     | `{}`                |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a`   | `{ _splat: 'a' }`   |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a/b` | `{ _splat: 'a/b' }` |
 
 ### Route Groups and Private Folders
 
@@ -118,12 +121,11 @@ src/routes/
 ├── layout.tsx                          # Root Layout
 ├── page.tsx                            # /
 ├── (marketing)/                        # Route Group (pathless)
-│   ├── about/
-│   │   └── page.tsx                    # /about
-│   └── blog/
-│       ├── [slug]/
-│       │   └── page.tsx                # /blog/:slug
-│       └── page.tsx                    # /blog
+│   └── about/
+│       └── page.tsx                    # /about
+├── blog/
+│   └── [slug]/
+│       └── page.tsx                    # /blog/:slug
 ├── shop/
 │   └── [...slug]/
 │       └── page.tsx                    # /shop/* (Catch-all)
@@ -131,6 +133,9 @@ src/routes/
 │   └── [[...slug]]/
 │       └── page.tsx                    # /docs/* (Optional Catch-all)
 ├── api/
+│   ├── auth/
+│   │   └── [...all]/
+│   │       └── route.ts                # /api/auth/* (Catch-all)
 │   └── health/
 │       └── route.ts                    # /api/health
 └── _private/                           # Private Folder
@@ -145,14 +150,14 @@ This structure generates a route tree equivalent to:
   - **Index** (`/`)
   - **Marketing Group** (Pathless)
     - **About** (`/about`)
-    - **Blog** (`/blog`)
-      - **Post** (`/blog/$slug`)
+  - **Blog** (`/blog`)
+    - **Post** (`/blog/$slug`)
   - **Shop** (`/shop`)
-    - **Catch-all** (`/shop/$slug`)
+    - **Catch-all** (`/shop/$`) (Param: `_splat`)
   - **Docs** (`/docs`)
-    - **Optional Catch-all** (`/docs/$slug`)
+    - **Optional Catch-all** (`/docs/$` + Index) (Param: `_splat`)
   - **API** (`/api`)
-    - **Auth Catch-all** (`/api/auth/$slug`)
+    - **Auth Catch-all** (`/api/auth/$`) (Param: `_splat`)
     - **Health** (`/api/health`)
 
 ## Organizing Your Project
