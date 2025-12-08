@@ -33,6 +33,8 @@ export default defineConfig({
 })
 ```
 
+Example project: https://github.com/nrjdalal/start-pro, the project uses this plugin to generate routes. And provides other useful insights like `drizzle`, `shadcn`, `better-auth`, `dark-mode` and a lot more.
+
 ## Folder and File Conventions
 
 `virtual-next-routes` adopts the Next.js App Router conventions for file-system routing.
