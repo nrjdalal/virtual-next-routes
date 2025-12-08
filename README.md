@@ -21,12 +21,12 @@ import tsConfigPaths from "vite-tsconfig-paths"
 export default defineConfig({
   plugins: [
     tsConfigPaths(),
-+     virtualNextRoutes(),
++   virtualNextRoutes(),
     tanstackStart({
       router: {
-        // Specifies the directory TanStack Router uses for your routes.
-        routesDirectory: 'app', // Defaults to "routes", relative to srcDirectory
-+         virtualRouteConfig: "./routes",
+        // Specifies the directory TanStack Router (default: "routes") uses for your routes.
++       routesDirectory: 'app',
++       virtualRouteConfig: "./routes",
       },
     }),
   ],
