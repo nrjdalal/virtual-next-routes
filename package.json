@@ -1,6 +1,6 @@
 {
   "name": "virtual-next-routes",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "virtual-next-routes",
   "keywords": [],
   "homepage": "https://github.com/nrjdalal/virtual-next-routes#readme",
@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "bin": "tsup && node dist/bin/index.js",
+    "bin": "tsup && node dist/bin/index.js --no-watch",
     "build": "tsup",
     "dev": "tsup --watch",
     "prepare": "npx simple-git-hooks"

@@ -16,52 +16,29 @@ export const routes = rootRoute("layout.tsx", [
   route("about", [
     index("(marketing)/about/page.tsx")
   ]),
-  route("blog", [
-    route("$slug", [
-      index("(marketing)/blog/[slug]/page.tsx")
-    ]),
-    index("(marketing)/blog/page.tsx")
-  ]),
-  layout("(shop)/layout.tsx", [
-    route("account", [
-      index("(shop)/account/page.tsx")
-    ]),
-    route("cart", [
-      index("(shop)/cart/page.tsx")
-    ])
-  ]),
   route("api", [
-    route("posts", [
-      route("$slug", [
-        index("api/posts/[slug]/route.ts")
+    route("auth", [
+      route("$", [
+        index("api/auth/[...all]/route.ts")
       ])
     ]),
-    route("users", [
-      index("api/users/route.ts")
-    ]),
-    index("api/route.ts")
+    route("health", [
+      index("api/health/route.ts")
+    ])
   ]),
   route("blog", [
-    route("$slug", "blog/[slug]/layout.tsx", [
+    route("$slug", [
       index("blog/[slug]/page.tsx")
     ])
   ]),
-  route("dashboard", "dashboard/layout.tsx", [
-    route("analytics", [
-      index("dashboard/analytics/page.tsx")
-    ]),
-    index("dashboard/page.tsx")
+  route("docs", [
+    route("$", "docs/[[...slug]]/page.tsx"),
+    index("docs/[[...slug]]/page.tsx")
   ]),
-  route("features", [
-    layout("features/(settings)/layout.tsx", [
-      route("account", [
-        index("features/(settings)/account/page.tsx")
-      ]),
-      route("profile", [
-        index("features/(settings)/profile/page.tsx")
-      ])
-    ]),
-    index("features/page.tsx")
+  route("shop", [
+    route("$", [
+      index("shop/[...slug]/page.tsx")
+    ])
   ]),
   index("page.tsx")
 ]);

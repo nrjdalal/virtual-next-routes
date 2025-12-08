@@ -37,6 +37,7 @@ const main = async () => {
         cwd: { type: "string", short: "c" },
         output: { type: "string", short: "o", default: "routes.ts" },
         watch: { type: "boolean", short: "w", default: true },
+        "no-watch": { type: "boolean" },
         debug: { type: "boolean", short: "d", default: false },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
@@ -60,7 +61,7 @@ const main = async () => {
     await virtualNextRoutes({
       cwd,
       output,
-      watch: values.watch,
+      watch: values["no-watch"] ? false : (values.watch ?? true),
       debug: values.debug,
     })
   } catch (err: any) {

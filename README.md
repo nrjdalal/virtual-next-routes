@@ -23,9 +23,9 @@ export default defineConfig({
     tsConfigPaths(),
 +     virtualNextRoutes(),
     tanstackStart({
-      tsr: {
-        // This is the directory where TanStack Router will look for your routes.
-        routesDirectory: "app",
+      router: {
+        // Specifies the directory TanStack Router uses for your routes.
+        routesDirectory: 'app', // Defaults to "routes", relative to srcDirectory
 +         virtualRouteConfig: "./routes",
       },
     }),
@@ -51,21 +51,52 @@ The following files are used to define routes and layouts:
 
 Folders define URL segments. Nesting folders nests segments. Layouts at any level wrap their child segments.
 
-| Path                       | URL pattern | Description                  |
-| -------------------------- | ----------- | ---------------------------- |
-| `src/routes/layout.tsx`    | —           | Root layout wraps all routes |
-| `src/routes/page.tsx`      | `/`         | Public route                 |
-| `src/routes/blog/page.tsx` | `/blog`     | Public route                 |
+| Path                         | URL pattern | Description                  |
+| ---------------------------- | ----------- | ---------------------------- |
+| `src/routes/layout.tsx`      | —           | Root layout wraps all routes |
+| `src/routes/page.tsx`        | `/`         | Public route                 |
+| `src/routes/blog/layout.tsx` | -           | Layout for blog routes       |
+| `src/routes/blog/page.tsx`   | `/blog`     | Public route                 |
 
 ### Dynamic Routes
 
-Dynamic segments can be created by wrapping a folder's name in square brackets: `[folderName]`.
+When you don't know the exact segment names ahead of time and want to create routes from dynamic data, you can use Dynamic Segments that are filled in at request time or prerendered at build time.
 
-| Path                                   | URL pattern                               |
-| -------------------------------------- | ----------------------------------------- |
-| `src/routes/blog/[slug]/page.tsx`      | `/blog/my-first-post`                     |
-| `src/routes/shop/[...slug]/page.tsx`   | `/shop/clothing`, `/shop/clothing/shirts` |
-| `src/routes/docs/[[...slug]]/page.tsx` | `/docs`, `/docs/layouts-and-pages`        |
+#### Dynamic Segments
+
+A Dynamic Segment can be created by wrapping a folder's name in square brackets: `[folderName]`. For example, `[id]` or `[slug]`.
+
+| Route                             | Example URL | `params`        |
+| --------------------------------- | ----------- | --------------- |
+| `src/routes/blog/[slug]/page.tsx` | `/blog/a`   | `{ slug: 'a' }` |
+| `src/routes/blog/[slug]/page.tsx` | `/blog/b`   | `{ slug: 'b' }` |
+| `src/routes/blog/[slug]/page.tsx` | `/blog/c`   | `{ slug: 'c' }` |
+
+#### Catch-all Segments
+
+Dynamic Segments can be extended to **catch-all** subsequent segments by adding an ellipsis inside the brackets `[...folderName]`.
+
+**Example:** `src/routes/shop/[...slug]/page.tsx`
+
+| Route                                | Example URL   | `params`                    |
+| ------------------------------------ | ------------- | --------------------------- |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a`     | `{ slug: ['a'] }`           |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b`   | `{ slug: ['a', 'b'] }`      |
+| `src/routes/shop/[...slug]/page.tsx` | `/shop/a/b/c` | `{ slug: ['a', 'b', 'c'] }` |
+
+#### Optional Catch-all Segments
+
+Catch-all Segments can be made **optional** by including the parameter in double square brackets: `[[...folderName]]`.
+
+**Example:** `src/routes/docs/[[...slug]]/page.tsx`
+
+The difference between **catch-all** and **optional catch-all** segments is that with optional, the route without the parameter is also matched (`/docs` in the example above).
+
+| Route                                  | Example URL | `params`               |
+| -------------------------------------- | ----------- | ---------------------- |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs`     | `{ slug: undefined }`  |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a`   | `{ slug: ['a'] }`      |
+| `src/routes/docs/[[...slug]]/page.tsx` | `/docs/a/b` | `{ slug: ['a', 'b'] }` |
 
 ### Route Groups and Private Folders
 
@@ -93,17 +124,17 @@ src/routes/
 │       ├── [slug]/
 │       │   └── page.tsx                # /blog/:slug
 │       └── page.tsx                    # /blog
-├── (shop)/                             # Route Group (pathless)
-│   ├── layout.tsx                      # Shop Layout (wraps account & cart)
-│   ├── account/
-│   │   └── page.tsx                    # /account
-│   └── cart/
-│       └── page.tsx                    # /cart
+├── shop/
+│   └── [...slug]/
+│       └── page.tsx                    # /shop/* (Catch-all)
+├── docs/
+│   └── [[...slug]]/
+│       └── page.tsx                    # /docs/* (Optional Catch-all)
 ├── api/
-│   └── users/
-│       └── route.ts                    # /api/users
-└── _components/                        # Private Folder
-    └── Button.tsx                      # (Ignored)
+│   └── health/
+│       └── route.ts                    # /api/health
+└── _private/                           # Private Folder
+    └── utils.ts                        # (Ignored)
 ```
 
 ### Route Tree Output
@@ -116,12 +147,13 @@ This structure generates a route tree equivalent to:
     - **About** (`/about`)
     - **Blog** (`/blog`)
       - **Post** (`/blog/$slug`)
-  - **Shop Group** (Pathless)
-    - **Layout**
-    - **Account** (`/account`)
-    - **Cart** (`/cart`)
+  - **Shop** (`/shop`)
+    - **Catch-all** (`/shop/$slug`)
+  - **Docs** (`/docs`)
+    - **Optional Catch-all** (`/docs/$slug`)
   - **API** (`/api`)
-    - **Users** (`/api/users`)
+    - **Auth Catch-all** (`/api/auth/$slug`)
+    - **Health** (`/api/health`)
 
 ## Organizing Your Project
 
