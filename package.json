@@ -53,16 +53,16 @@
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
-    "@tanstack/virtual-file-routes": "^1.140.0",
-    "@types/node": "^24.10.1",
+    "@tanstack/virtual-file-routes": "^1.141.0",
+    "@types/node": "^24.10.3",
     "@types/react": "^19.2.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "simple-git-hooks": "^2.13.1",
-    "sort-package-json": "^3.5.0",
+    "sort-package-json": "^3.5.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.6"
+    "vite": "^7.2.7"
   },
   "peerDependencies": {
     "@tanstack/virtual-file-routes": ">=1.0.0",
